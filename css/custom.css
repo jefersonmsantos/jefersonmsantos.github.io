@@ -256,6 +256,13 @@ footer .social li a:hover {
     width: 20.8%;
 }
 
+.main-div{
+    display:table;
+    content:" ";
+    margin-left:15vw;
+    margin-right:15vw;
+}
+
 @media only screen and (max-width: 767px) { 
    .col-md-3{
        display:flex;
@@ -321,6 +328,17 @@ footer .social li a:hover {
         position: relative;
         margin-bottom:30px;
     }
+    .main-div{
+        display:block;
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .container{
+        padding-left: 0px;
+        padding-right:0px
+    }
+
 }
 
 
@@ -364,12 +382,7 @@ footer .social li a:hover {
     font-size: 16px;
 }
 
-.main-div{
-    display:table;
-    content:" ";
-    margin-left:15vw;
-    margin-right:15vw;
-}
+
 .social-icon {
     list-style: none;
     padding-top: 10px;

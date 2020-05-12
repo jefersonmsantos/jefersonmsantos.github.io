@@ -64,7 +64,7 @@ a { font-family: "Open Sans", sans-serif }
     height: 60vh;
     padding-top: 0px;
     background:  #F7F7F7 center top;
-    margin-bottom:25px;
+    margin-bottom:15px;
 }
 p.p-intro {
     color: #E85F37;
@@ -183,12 +183,13 @@ img.img-intro {
     float: left;
     border: none;
 }
-.content .post h1:before {
+/*.content .post h1:before {
     content: url(../img/separator.png);
     position: absolute;
-    top: -35px;
+    top: 0px;
     left: 1px;
-}
+    margin-top:15px;
+}*/
 .in-content { margin-top: 55px }
 a.read-more {
     padding: 5px 10px;

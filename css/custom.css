@@ -139,6 +139,11 @@ img.img-intro {
     margin-left: auto;
     margin-right: auto;
 }
+.Email{
+    color:rgb(168, 168, 168);
+    margin-top:2px;
+}
+
 .content { padding-top: 0px;
             margin-left:25vw }
 .post { margin-bottom: 80px }

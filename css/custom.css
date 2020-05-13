@@ -21,8 +21,9 @@ a { font-family: "Open Sans", sans-serif }
     z-index: 10;
     position: relative;
     margin-bottom:100px;
+    
 }
-.group.top-nav { margin-bottom: 0px }
+.group.top-nav { margin-bottom: 0px; margin-right:3vw }
 .group.top-nav nav a { text-decoration: none }
 .group.top-nav nav a:hover { 
 	color: #FF6C40; -webkit-transition: all .25s ease-in-out;

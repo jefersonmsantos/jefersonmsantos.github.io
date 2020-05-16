@@ -1,0 +1,441 @@
+<html>
+    <head>
+        <meta name='viewport' content='width=device-width'>
+        <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+    </head>
+    <style>
+        body{
+            height: 100vh;
+            background-image: url('calculation.jpg');
+        }
+        
+        #screen{
+            background-color:blanchedalmond;
+            font-size: 60px; 
+            display:flex;
+            justify-content:flex-end;
+            
+            align-items: center;
+            padding-right: 1%;
+            border: solid black; 
+             
+            }
+
+        #screenPara{
+            
+            text-align: right !important;
+            font-family: Lobster;
+            
+        }
+        
+        #mainBody{
+            /*justify-items: center;*/
+            margin: 10% 33% 5% 33%;
+            height: 70vh;
+            border: solid black;
+            display: grid;
+            grid-template-rows: 20% 16% 64%;
+            gap: 2px;
+            padding: 4px;
+            background-color: rgb(187, 211, 255);
+
+        }
+
+        @media screen and (max-width: 480px)
+        {
+            #mainBody {
+                width: 80vw;
+                margin: 20% 10% 20% 10%;
+            }
+
+            #screenPara{
+                text-align:right;
+                justify-content: right;
+            }
+
+            #screen{
+               text-align:right;
+                justify-content: right; 
+            }
+
+        }
+
+        #buttons{
+            display:grid;
+            grid-template-columns:75% 25%;
+            
+        }
+
+        #numbers{
+            display:grid;
+            grid-template-columns:33% 33% 33%;
+            text-align:center;
+
+            
+            
+        }
+        #buttonsRight{
+            display:grid;
+            grid-template-rows:25% 25% 25%;
+            text-align:center;
+            background-color: white;
+            
+            
+        }
+
+        #equal{
+            background-color: orange;
+            color:white;
+        }
+
+        #clear{
+            background-color:yellow;
+            color:black;
+        }
+
+        #auxButtons{
+            display:grid;
+            grid-template-columns:50% 50%;
+        }
+
+        #BS{
+            background-color: white;
+        }
+        #point{
+            background-color: white;
+        }
+        
+
+       
+        
+        .display{
+
+        }
+
+        .numbers{
+            background-color: rgb(196, 194, 194);
+            border: solid  black;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            transition: all .08s ease;
+            
+            
+        }
+
+        .buttons{
+            border: solid  black;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            transition: all .08s ease;
+        }
+
+        .operations{
+
+        }
+
+        .pressing{
+            transform:scale(0.95);
+            box-shadow: 0 0 1rem black;
+        }
+
+
+    </style>
+
+
+    <body style.height='100vh'>
+
+        <div id='mainBody'>  
+            <div id='screen'><p id='screenPara'>0</p></div>
+            
+            <div id='auxButtons'>
+                
+                <div data-key='clear' id='clear' class='buttons'>AC</div>
+                <div data-key='BS' id='BS' class='buttons'>BS</div>
+
+
+
+            </div>
+
+            <div id='buttons'>
+                <div id='numbers'>
+                    <div data-key='1' class='numbers'>1</div>
+                    <div data-key='2' class='numbers'>2</div>
+                    <div data-key='3' class='numbers'>3</div>
+                    <div data-key='4' class='numbers'>4</div>
+                    <div data-key='5' class='numbers'>5</div>
+                    <div data-key='6' class='numbers'>6</div>
+                    <div data-key='7' class='numbers'>7</div>
+                    <div data-key='8' class='numbers'>8</div>
+                    <div data-key='9' class='numbers'>9</div>
+                    <div data-key='.' id="point" class='buttons'>.</div>
+                    <div data-key='0' class='numbers'>0</div>
+                    <div data-key='equal' id='equal' class='buttons' >=</div>
+                </div>
+                
+                <div id='buttonsRight'>
+                    
+                    <div data-key='+' id='add' class='buttons'>+</div>
+                    <div data-key='-' id='subtract' class='buttons'>-</div>
+                    <div data-key='x' id='multiply' class='buttons'>x</div>
+                    <div data-key='/' id='divide' class='buttons'>/</div>
+                </div>
+                
+                
+            </div> 
+
+        </div>  
+
+
+
+
+
+    </body>
+
+
+
+
+
+
+
+    <script>
+        
+        var lastButton='';
+        const displayScreen = document.querySelector('#screen');
+        const para = document.querySelector('#screenPara');
+        var displayValue=displayScreen.textContent;
+
+        function add(a,b){
+            return limitDecimal(Number(a) + Number(b));
+        }
+
+        function subtract(a,b){
+            return limitDecimal(a-b);
+        }
+
+        function multiply(a,b){
+            return limitDecimal(a*b);
+        }
+
+        function divide(a,b){
+                       
+            return limitDecimal(a/b);
+        }
+
+        function limitDecimal(operation){
+            if ((operation)%1===0) {
+                return operation;
+            } else {
+                calc = (operation).toString();
+                intDecimal=calc.split(".");
+                
+                if ((intDecimal[0].length + intDecimal[1].length) >12) {
+                    decimalCases = 12 - intDecimal[0].length;
+                    
+                    return Math.floor(calc*Math.pow(10,decimalCases))/Math.pow(10,decimalCases);
+                } else {
+                    return calc;
+                }
+            }
+            
+            
+        }
+
+        function operate(operator,a,b){
+            const operation = document.querySelector(`div[data-key="${operator}"]`);
+            const operationFunction = operation.attributes[1].value;
+            lastButton='equal';
+            return window[operationFunction](a,b);
+            
+        }
+
+        function pressButton(digit){
+            ids = ['1','2','3','4','5','6','7','8','9','0','.','equal','+','-','x','/','clear','BS'];
+            
+
+
+            if (ids.includes(digit)){
+
+                const pressed = document.querySelector(`div[data-key="${digit}"]`)
+                pressed.classList.add('pressing');
+                /*pressed.addEventListener('transitionend',removeTransition(pressed))*/
+
+                if (lastButton=='equal') {
+                    clear();
+                }
+
+                if (digit=="equal"){
+                    equationParts=[];
+                    var displayValue=para.textContent;
+                    equationParts=displayValue.split(" ");
+
+                    while (equationParts.length > 1){
+                        const lookingOP = equationParts.findIndex((part) => (part == "/") || (part == "x"));
+                        if (lookingOP > 0){
+                            result = operate(equationParts[lookingOP],equationParts[lookingOP-1],equationParts[lookingOP+1]);
+                            /*equationParts.splice(equationParts.length-1);*/
+                            equationParts.splice(lookingOP-1,3);
+                            equationParts.splice(lookingOP-1,0,result.toString());
+                        } else {
+                            const lookingOP = equationParts.findIndex((part) => (part == "+") || (part == "-"));
+                            result = operate(equationParts[lookingOP],equationParts[lookingOP-1],equationParts[lookingOP+1]);
+                            /*equationParts.splice(equationParts.length-1);*/
+                            equationParts.splice(lookingOP-1,3);
+                            equationParts.splice(lookingOP-1,0,result.toString());
+
+                        }
+
+                    }
+                    clear();
+                    updateDisplay(displayValue,equationParts[0]);
+                    /*pressed.classList.remove('pressing');*/
+                    
+
+                } else {
+                    if (digit=="clear"){
+                        updateDisplay(displayValue,"clear");
+                        lastButton='';
+                        /*pressed.classList.remove('pressing');*/
+                    } else{
+                    
+                        
+                        updateDisplay(displayValue,digit);
+                        lastButton='';
+                        /*pressed.classList.remove('pressing');*/
+                    }
+                } 
+            }
+        }
+
+        function clear(){
+            displayValue = "0";
+            para.textContent=displayValue;
+        }
+
+        function countDecimals(value){
+            if(Math.floor(value)===value)return 0;
+            return value.toString().split('.')[1].length || 0;
+        }
+
+        function updateDisplay(displayValue,btnValue){
+            displayValue=para.textContent;
+            if (btnValue == "clear") {
+                clear();
+            } else {
+            
+                if (displayValue=="0"){
+                    if (btnValue=="BS"){
+                        displayValue=displayValue;
+                    } else{ 
+                    
+                        displayValue=btnValue.toString();
+                        para.textContent=displayValue;
+                    }
+                } else {
+                    if (btnValue=="BS"){
+                        equationParts=displayValue.split("");
+                        console.log(equationParts[equationParts.length-1]);
+                        if (equationParts[equationParts.length-1]==" ") {
+                            
+                            equationParts.splice(equationParts.length-3,3)
+                        } else {
+
+                            equationParts.splice(equationParts.length-1);
+                        }
+                        
+                        displayValue=equationParts.join("");
+
+                      
+                    }else{
+                        
+                        
+                        if (para.offsetWidth > (0.9*displayScreen.offsetWidth)) {
+                            
+                            displayValue = displayValue;
+                        } else {
+                        
+                            if ((btnValue === "+") || (btnValue==="-") || (btnValue==="x") || (btnValue==="/")){
+                                displayValue = displayValue + " " +btnValue.toString()+" ";
+                            } else {
+                            
+                                displayValue = displayValue + btnValue.toString();
+
+                            }
+                        }
+                        }
+
+                    
+                    para.textContent=displayValue;
+                    
+                    
+                    
+                }
+            }
+        }
+
+        function removeTransition(e) {
+            if (e.propertyName !== 'transform') return;
+            this.classList.remove('pressing');
+        }
+
+        const numbers = document.querySelectorAll('.numbers')
+        numbers.forEach(number=>number.addEventListener('transitionend',removeTransition));
+
+        const buttons = document.querySelectorAll('.buttons')
+        buttons.forEach(button=>button.addEventListener('transitionend',removeTransition));
+
+        function mouseClick(e){
+            pressButton(e.target.attributes[0].value);
+        }
+
+        function keyBoardClick(e){
+            console.log(e.keyCode);
+            var dict = {
+                96: '0',
+                97: '1',
+                98: '2',
+                99: '3',
+                100: '4',
+                101: '5',
+                102: '6',
+                103: '7',
+                104: '8',
+                105: '9',
+                48: '0',
+                49: '1',
+                50: '2',
+                51: '3',
+                52: '4',
+                53: '5',
+                54: '6',
+                55: '7',
+                56: '8',
+                57: '9',
+                107: '+',
+                109: '-',
+                106: 'x',
+                111: '/',
+                110: '.',
+                13: 'equal',
+                8: 'BS'
+            }
+            console.log(dict);
+            console.log(Object.keys(dict));
+            console.log(dict['97']);
+            if (Object.keys(dict).includes((e.keyCode)).toString()) {
+                dictKey = e.keyCode.toString();
+                console.log(dict[dictKey]);
+                pressButton(dict[dictKey]);
+            }
+        }
+
+
+        window.addEventListener('click',mouseClick);
+        window.addEventListener('keydown',keyBoardClick);
+
+
+
+    </script>
+
+</html>

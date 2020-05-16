@@ -1,0 +1,236 @@
+<html>
+    <head>
+        <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+
+    </head>
+    
+    <style>
+        .rect:hover{
+            stroke: black;
+            
+        }
+
+        #pageTitle{
+            
+            display:flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #body{
+            display:flex;
+            justify-content: center;
+        }
+    </style>
+    
+    <body>
+        <h1 id='pageTitle'>Global land surface temperature</h1>
+        <h2 id='pageTitle'>Variation from base temperature: 8.66℃</h2>
+        
+       
+    </body>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded',function(){
+            const req = new XMLHttpRequest();
+            req.open('GET','https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json',true);
+            req.send();
+            req.onload=function(){
+                const json = JSON.parse(req.responseText);
+                const w = 0.9*window.innerWidth;
+                const h = 0.7*window.innerHeight;
+                const padding = 50;
+                
+                const legendLabel = {
+                                    0: '-7.5℃ - -5.0℃',
+                                    1: '-5.0℃ - -2.5℃',
+                                    2: '-2.5℃ - -0℃',
+                                    3:'0℃ - 2.5℃',
+                                    4: '2.5℃ - 5.0℃',
+                                    5: '5.0℃ - 7.5℃'
+
+                };
+
+                const monthsNames = {
+                                    1: 'January',
+                                    2: 'February',
+                                    3:'March',
+                                    4:'April',
+                                    5:'May',
+                                    6:'June',
+                                    7:'July',
+                                    8:'August',
+                                    9:'September',
+                                    10: 'October',
+                                    11:'November',
+                                    12:'December'
+                };
+
+                console.log(d3.schemePastel1);
+                colorArray=['#b7fcc8','#fcab68','#5e79f3','#c06122','#0532fc','#af2a08'];
+
+
+                const baseTemperature = json.baseTemperature;
+                var color = d3.scaleOrdinal(colorArray);
+                
+                console.log(color);
+
+                const xScale=d3.scaleLinear().domain([d3.min(json.monthlyVariance,(d)=>d.year),d3.max(json.monthlyVariance,(d)=>d.year)]).range([2*padding,w-3*padding]);
+                const yScale=d3.scaleBand()
+                                .domain([1,2,3,4,5,6,7,8,9,10,11,12])
+                                .range([h-2*padding,0.5*padding])
+                                .paddingInner(0)
+                                .paddingOuter(0)
+                                .align(0)
+                                .round(false);
+                
+                const totalYears = d3.max(json.monthlyVariance,(d)=>d.year) - d3.min(json.monthlyVariance,(d)=>d.year);
+
+                const svg = d3.select("body")
+                            .append("svg")
+                            .attr("width", w)
+                            .attr("height", h)
+                            .style('margin-left',0.06*window.innerWidth/2);
+
+                svg.selectAll("rect")
+                .data(json.monthlyVariance)
+                .enter()
+                .append("rect")
+                .attr("x", (d)=>xScale(d.year))
+                .attr("y", (d)=>yScale(d.month))
+                .attr('fill',(d)=>color(adjustVariance(d.variance)))
+                .attr("width", (w-5*padding)/(totalYears))
+                .attr("height", (h-2*padding)/12)
+                .attr('class','rect')
+                .append('title')
+                .attr('id','tooltip')
+                .text((d)=>'Year: '+d.year+'\nMonth: '+monthsNames[d.month]+'\nVariance: '+d.variance+'℃');
+                
+                var ticks = [1,2,3,4,5,6,7,8,9,10,11,12];
+                var tickLabels = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+                const xAxis = d3.axisBottom(xScale)
+                                .tickFormat(d3.format('d'));
+                const yAxis = d3.axisLeft(yScale)
+                                .tickValues(ticks)
+                                .tickFormat((d,i)=> tickLabels[i])
+                                .tickSize(10,1);
+
+
+
+                svg.append('g')
+                    .attr('transform','translate(0,'+(h-(2*padding-1))+')')
+                    .attr('id','x-axis')
+
+                    .call(xAxis)
+                
+                svg.append('text')
+                    
+                    .attr('x',(w-4*padding)/2)
+                    .attr('dy',h-padding)
+                    .style('font-size',22)
+                    .style('color','black')
+                    .text('Years');
+                
+                
+                
+                svg.append('g')
+                    .attr('transform','translate('+2*padding+','+0+')')
+                    .attr('id','y-axis')
+                    
+                    .call(yAxis)
+
+                svg.append('text')
+                    .attr('transform','rotate(-90)')
+                    .attr('x',-h/2)
+                    .attr('dy',18)
+                    .style('font-size',22)
+                    .style('color','black')
+                    .text('Months');
+
+                var legendContainer = svg.append('g')
+                                        .attr('id','legend');
+
+                console.log(color.domain());
+
+                const sortedColors = color.domain().sort(function(a,b){
+                    if (a>b){
+                        return -1
+                    } else {
+                        return 1
+                    }
+
+                });
+
+                console.log(sortedColors);
+
+                svg.append('text')
+                    .text('Legend')
+                    .attr('x',w-2*padding)
+                    .attr('y',(h/2-6*20))
+                    .attr('width',3*padding)
+                    .style('word-wrap','break-word')
+
+                    .style('text-anchor','center')
+                    .style('font-size',15);
+
+                var legend = legendContainer.selectAll('#legend')
+                                            .data(sortedColors)
+                                            .enter()
+                                            .append('g')
+                                            .attr('transform',(d,i)=>'translate(0,'+(h/2-i*20)+')');
+                legend.append('rect')
+                        .attr('x',0.99*w)
+                        .attr('width',18)
+                        .attr('width',18)
+                        .attr('height',18)
+                        .style('fill',color);
+
+                legend.append('text')
+                        .attr('x',0.99*w-6)
+                        .attr('y',16)
+                        
+                        .style('text-anchor','end')
+                        .style('font-size',15)
+                        .text(function(d){
+                            return legendLabel[d];
+                        });
+                    
+                svg.append('text')
+                    .text('Data from https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json')
+                    .attr('y',h-10)
+                    .attr('font-size',10);
+
+                
+
+                function adjustVariance(variance) {
+                    if ((variance >= -7.5) && (variance <-5)) {
+                        return 0
+                    } else {
+                        if ((variance >= -5) && (variance <-2.5)) {
+                            return 1
+                        } else {
+                            if ((variance >= -2.5) && (variance <0)) {
+                                return 2
+                            } else {
+                                if ((variance >= 0) && (variance <2.5)) {
+                                    return 3
+                                } else {
+                                    if ((variance >= 2.5) && (variance <5)) {
+                                        return 4
+                                    } else {
+                                        return 5
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    </script>
+
+    
+</html>

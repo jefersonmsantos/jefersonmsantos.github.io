@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded',function(){
     
     
     const req = new XMLHttpRequest();
-    req.open('GET','https://ec2-3-22-223-100.us-east-2.compute.amazonaws.com:3000/matches/',true);
+    req.open('GET','https://dashboard.csgopredictiondata.com:9000/matches/',true);
     req.send();
     req.onload=function(){
         const json = JSON.parse(req.responseText);

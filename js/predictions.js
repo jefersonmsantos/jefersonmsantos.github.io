@@ -152,12 +152,14 @@ document.addEventListener('DOMContentLoaded',function(){
         correctText.textContent=hitRate(json)[3]
         
         
-        
+        console.log(inverseSortedAuxiliary);
+        console.log(inverseSortedAuxiliary.length);
+        console.log(json.length*18);
         /* Creationg table SVG*/
         const svg = d3.select("#table")
                         .append('svg')
                         .attr('width',3*w+w/8-1.5*padding)
-                        .attr('height',json.length*18+1100);
+                        .attr('height',(json.length)*20+100);
 
         
 
